@@ -1,0 +1,97 @@
+test_name: 'efficient_b2_base_v2'
+log_path: '/home/yuigahama/kaggle/rfcx/logs'
+epochs: 45
+n_splits: 5
+duration: 6
+SR: 48000
+
+model_params:
+    spectrogram_params:
+        n_fft: 2048
+        hop_length: 512
+        win_length: 2048
+        window: 'hann'
+        center: True
+        pad_mode: 'reflect'
+        freeze_parameters: True
+
+    logmel_extractor_params:
+        sr: 48000
+        n_fft: 2048
+        n_mels: 384
+        fmin: 40
+        fmax: 15000
+        ref: 1.0
+        amin: 0.0000000001
+        top_db: null
+        is_log: False
+        freeze_parameters: True
+
+    spec_augmenter_params:
+        time_drop_width:  64
+        time_stripes_num: 2
+        freq_drop_width:  8
+        freq_stripes_num: 2
+
+    pce_params:
+        gain: 0.98
+        bias: 2
+        power: 0.5
+        time_constant: 0.4
+        eps: 0.000001
+        
+    base_model_name: 'efficientnet-b2'
+    pretrained: True
+    num_classes: 24
+    
+
+optim_params:
+    lr: 0.001
+    weight_decay: 0.00007
+    betas:
+    - 0.9
+    - 0.999
+        
+scheduler_params:
+    T_max: 35
+    wormup: 10
+    start: 0.0005
+    end: 0.001
+    stride: 0.00005
+    
+loss_params: 
+    - 1
+    - 0.5
+    
+train_params:
+    pre_calc: False
+    train: True
+    data_path: '/home/yuigahama/kaggle/rfcx/data/train/'
+    transform_params:
+        GaussianNoiseSNR: 10
+        PinkNoiseSNR: 10
+        max_steps: 2
+    
+val_params:
+    train: True
+    pre_calc: True
+    data_path: '/home/yuigahama/kaggle/rfcx/data/train/'
+    transform_params:
+        GaussianNoiseSNR: 13
+        PinkNoiseSNR: 13
+        max_steps: 3
+
+test_data_params:
+    train: False
+    path: '/home/yuigahama/kaggle/rfcx/data/test/'
+
+dataloder_params:
+    batch_size: 10
+    num_workers: 15
+    pin_memory: False
+
+test_dataloder_params:
+    batch_size: 32
+    num_workers: 15
+    pin_memory: False
+    shuffle: False
